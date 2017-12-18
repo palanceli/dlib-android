@@ -9,6 +9,7 @@
 #include <glog/logging.h>
 #include <sstream>
 #include <unistd.h>
+#include <string.h>
 
 // Java Integer/Float
 
