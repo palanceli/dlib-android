@@ -7,3 +7,4 @@ obj/
 /travis-ci/android-ndk
 libs/
 dlib-android-app/dlib/src/main/jniLibs
+dlib-android-app/app/src/main/res/raw/shape_predictor_68_face_landmarks.dat
