@@ -201,6 +201,9 @@ def make_links():
     landmarkDatDst = cwd + '/dlib-android-app/app/src/main/res/raw/shape_predictor_68_face_landmarks.dat'
     if os.path.exists(landmarkDatDst):
         os.remove(landmarkDatDst)
+    parentDir = os.path.dirname(landmarkDatDst)
+    if not os.path.exists(parentDir):
+        os.mkdir(parentDir)
     landmarkDatSrc = cwd + '/data/shape_predictor_68_face_landmarks.dat'
     cmd = ['ln', '-s', landmarkDatSrc, landmarkDatDst]
     subprocess.call(cmd)
