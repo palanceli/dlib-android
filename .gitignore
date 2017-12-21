@@ -6,3 +6,4 @@ obj/
 *.bin
 /travis-ci/android-ndk
 libs/
+dlib-android-app/dlib/src/main/jniLibs/

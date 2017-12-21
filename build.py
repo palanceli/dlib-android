@@ -24,6 +24,7 @@ import argparse
 import shutil
 import subprocess
 from subprocess import Popen, PIPE
+import logging
 
 DEVICE_ABI = 'armeabi-v7a'
 
@@ -186,8 +187,28 @@ def test_cmake():
     else:
         print PrintColors.OKBLUE + 'Build Pass' + PrintColors.ENDC
 
+def make_links():
+    logging.debug('make links ...')
+    cwd = os.getcwd()
+    jniLibsDst = cwd + '/dlib-android-app/dlib/src/main/jniLibs'
+    if os.path.exists(jniLibsDst):
+        os.remove(jniLibsDst)
+    jniLibsSrc = cwd + '/libs'
+
+    cmd = ['ln', '-s', jniLibsSrc, jniLibsDst]
+    subprocess.call(cmd)
+
+    landmarkDatDst = cwd + '/dlib-android-app/app/src/main/res/raw/shape_predictor_68_face_landmarks.dat'
+    if os.path.exists(landmarkDatDst):
+        os.remove(landmarkDatDst)
+    landmarkDatSrc = cwd + '/data/shape_predictor_68_face_landmarks.dat'
+    cmd = ['ln', '-s', landmarkDatSrc, landmarkDatDst]
+    subprocess.call(cmd)
+
 
 if __name__ == '__main__':
+    logFmt = '%(asctime)s %(lineno)04d %(levelname)-8s %(message)s'
+    logging.basicConfig(level=logging.DEBUG, format=logFmt, datefmt='%H:%M',)
     # Move to top-level
     ROOT = os.path.dirname(os.path.abspath(__file__))
     os.chdir(ROOT)
@@ -206,6 +227,7 @@ if __name__ == '__main__':
         ndk_clean()
     else:
         ndk_build(args)
+        make_links()
 
     if args.android_project and os.path.exists(args.android_project):
         srcFolder = os.path.join('libs')
