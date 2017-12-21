@@ -337,6 +337,8 @@ public class CameraConnectionFragment extends Fragment {
         try {
             SparseArray<Integer> cameraFaceTypeMap = new SparseArray<>();
             // Check the facing types of camera devices
+            // 记录前后摄像头的个数，保存到
+            // cameraFaceTypeMap[LENS_FACING_FRONT]和cameraFaceTypeMap[LENS_FACING_BACK]
             for (final String cameraId : manager.getCameraIdList()) {
                 final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
                 final Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
@@ -357,6 +359,7 @@ public class CameraConnectionFragment extends Fragment {
                 }
             }
 
+            // 再次遍历找到首个目标摄像头
             Integer num_facing_back_camera = cameraFaceTypeMap.get(CameraCharacteristics.LENS_FACING_BACK);
             for (final String cameraId : manager.getCameraIdList()) {
                 final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
@@ -364,6 +367,7 @@ public class CameraConnectionFragment extends Fragment {
                 // If facing back camera or facing external camera exist, we won't use facing front camera
                 if (num_facing_back_camera != null && num_facing_back_camera > 0) {
                     // We don't use a front facing camera in this sample if there are other camera device facing types
+                    // 扔掉这种，剩下就是另一种
                     if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
                         continue;
                     }
@@ -377,6 +381,7 @@ public class CameraConnectionFragment extends Fragment {
                 }
 
                 // For still image captures, we use the largest available size.
+                // 找到与YUV_420_888兼容的最大尺寸
                 final Size largest =
                         Collections.max(
                                 Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)),
@@ -385,10 +390,12 @@ public class CameraConnectionFragment extends Fragment {
                 // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
+                // 找到与SurfaceTexture适配的尺寸，其实没有用到后三个参数
                 previewSize =
                         chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), width, height, largest);
 
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
+                // 根据orientation设置textureView的宽高比
                 final int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     textureView.setAspectRatio(previewSize.getWidth(), previewSize.getHeight());
@@ -396,7 +403,7 @@ public class CameraConnectionFragment extends Fragment {
                     textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
                 }
 
-                CameraConnectionFragment.this.cameraId = cameraId;
+                CameraConnectionFragment.this.cameraId = cameraId;  // 得到符合条件的摄像头
                 return;
             }
         } catch (final CameraAccessException e) {
@@ -608,11 +615,12 @@ public class CameraConnectionFragment extends Fragment {
             return;
         }
         final int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        final Matrix matrix = new Matrix();
+        final Matrix matrix = new Matrix(); // 提供一个3×3的变换矩阵
         final RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
         final RectF bufferRect = new RectF(0, 0, previewSize.getHeight(), previewSize.getWidth());
         final float centerX = viewRect.centerX();
         final float centerY = viewRect.centerY();
+        // 如果是竖屏，则rotation==0，不走这些分支
         if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
             bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
             matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
@@ -625,7 +633,7 @@ public class CameraConnectionFragment extends Fragment {
         } else if (Surface.ROTATION_180 == rotation) {
             matrix.postRotate(180, centerX, centerY);
         }
-        textureView.setTransform(matrix);
+        textureView.setTransform(matrix);    // 设置显示范围
     }
 
     /**

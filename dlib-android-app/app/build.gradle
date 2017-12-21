@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion rootProject.ext.androidCompileSdkVersion
-    buildToolsVersion "${rootProject.ext.androidBuildToolsVersion}"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.tzutalin.dlibtest"
