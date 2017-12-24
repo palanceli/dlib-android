@@ -140,7 +140,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
             matrix.postRotate(mScreenRotation);
             matrix.postTranslate(dst.getWidth() / 2.0f, dst.getHeight() / 2.0f);
         }
-//        matrix.postRotate(-90);
 
         final Canvas canvas = new Canvas(dst);
         canvas.drawBitmap(src, matrix, null);
