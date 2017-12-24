@@ -552,6 +552,7 @@ public class CameraConnectionFragment extends Fragment {
                     ImageReader.newInstance(
                             previewSize.getWidth(), previewSize.getHeight(), ImageFormat.YUV_420_888, 2);
 
+
             previewReader.setOnImageAvailableListener(mOnGetPreviewListener, backgroundHandler);
             previewRequestBuilder.addTarget(previewReader.getSurface());
 
@@ -633,6 +634,7 @@ public class CameraConnectionFragment extends Fragment {
         } else if (Surface.ROTATION_180 == rotation) {
             matrix.postRotate(180, centerX, centerY);
         }
+        matrix.postRotate(-90, centerX, centerY);
         textureView.setTransform(matrix);    // 设置显示范围
     }
 

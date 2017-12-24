@@ -119,6 +119,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
             orientation = Configuration.ORIENTATION_LANDSCAPE;
             mScreenRotation = 0;
         }
+        mScreenRotation = 0; // *#*# 不要旋转
 
         Assert.assertEquals(dst.getWidth(), dst.getHeight());
         final float minDim = Math.min(src.getWidth(), src.getHeight());
@@ -139,6 +140,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
             matrix.postRotate(mScreenRotation);
             matrix.postTranslate(dst.getWidth() / 2.0f, dst.getHeight() / 2.0f);
         }
+//        matrix.postRotate(-90);
 
         final Canvas canvas = new Canvas(dst);
         canvas.drawBitmap(src, matrix, null);
@@ -162,6 +164,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
             mIsComputing = true;
 
             Trace.beginSection("imageAvailable");
+
 
             final Plane[] planes = image.getPlanes();
 
